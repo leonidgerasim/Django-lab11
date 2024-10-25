@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <title>{{ title }}</title>
+    <style>
+        table {
+            margin-top: 10px;
+            margin-right: 5px;
+            width: 50%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #FFFFFF;
+            background-color: #FFFFFF;
+        }
+    </style>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body style="background-color: #FFFFFF">
+<hr />
+ <div class="row">
+    <div class="col-md-6">
+      <canvas id="my_chart_line"></canvas>
+    </div>
+    <div class="col-md-6">
+      <canvas id="myChartBar"></canvas>
+    </div>
+ </div>
+<form action="{% url 'main:index' %}" method="post">
+    {% csrf_token %}
+    <p>
+        <label for="func1">Function 1:</label>
+        <select id="func1" name="func1">
+            <option value="1">sqrt(x)</option>
+            <option value="2">1/x</option>
+            <option value="3">exp(x)</option>
+        </select>
+    </p>
+    <p>
+        <label for="func2">Function 2:</label>
+        <select id="func2" name="func2">
+            <option value="1">sqrt(x)</option>
+            <option value="2">1/x</option>
+            <option value="3">exp(x)</option>
+        </select>
+    </p>
+    <p>
+        <label for="func3">Function 3:</label>
+        <select id="func3" name="func3">
+            <option value="1">sqrt(x)</option>
+            <option value="2">1/x</option>
+            <option value="3">exp(x)</option>
+        </select>
+    </p>
+    <p>
+        <label for="lv">Min:</label>
+        <input type="number" id="lv" name="lv" value="{{ 0 }}" required>
+    </p>
+    <p>
+        <label for="gv">Max:</label>
+        <input type="number" id="gv" name="gv" value="{{ 10 }}" required>
+    </p>
+    <p>
+        <label for="p">Decimal places:</label>
+        <input type="number" id="p" name="p" value="{{ 0.5 }}" required step="0.1">
+    </p>
+    <button type="submit">Graphic</button>
+</form>
+ <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+ <script>
+        $.ajax({
+            method: "GET",
+            url: "{% url 'main:func' %}",
+            success: function(data) {
+                drawLineGraph(data, 'my_chart_line');
+            },
+            error: function(error_data) {
+                alert("Недопустимые значения");
+            }
+            })
+
+    function drawLineGraph(data, id) {
+      var labels = data.labels;
+      var chart_data = data.chart_data;
+      var ctx = document.getElementById(id).getContext('2d');
+      var chart1 = new Chart(ctx, {
+        // The type of chart we want to create
+        type: 'line',
+
+        // The data for our dataset
+        data: {
+          labels: labels,
+          datasets: [{
+            borderColor: 'rgb(55, 99, 132)',
+            data: chart_data,
+          }]
+        },
+
+        // Configuration options go here
+        options: {
+          scales: {
+            xAxes: [{
+              display: true
+            }],
+            yAxes: [{
+              ticks: {
+                beginAtZero: true
+              }
+            }]
+          }
+        }
+      });
+    }
+ </script>
+</body>
+</html>
